@@ -115,3 +115,6 @@ exercised with `curl` during development. The frontend was built with
 both `vite dev` (with the `/api` proxy) and `vite preview` were run
 end-to-end against a live backend to confirm the pages load and the proxy
 correctly forwards API requests.
+
+## Assignment Enhancements
+This project was enhanced for the placement assignment to include MongoDB query optimization, dynamic sub-task checklists, and a persistent dark mode switcher.
