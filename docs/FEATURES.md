@@ -62,6 +62,15 @@ params, request/response bodies, status codes). At a glance, it exposes:
   restarts; writes are serialized through an internal lock so two
   near-simultaneous requests can't corrupt the file.
 
+## 4. Advanced Features (Added for Placement Assignment)
+
+These features were added to make the application feel like a production-ready product and demonstrate full-stack engineering skills.
+
+| Feature | Details |
+|---|---|
+| **Sub-tasks (Checklists)** | Any todo can have an arbitrary number of sub-tasks. You can manage them (add steps, toggle completed steps, delete steps) in-place on the single todo detail page. Progress (completed checklist items out of total checklist items) is displayed visually on the main todos list page via a progress bar. |
+| **Persistent Dark Mode** | A theme toggle button swaps between Light and Dark mode. Theme state is saved to `localStorage` and read instantly in the document's `<head>` before render, avoiding any white flash on refresh or full page navigation across pages. |
+
 ## Out of scope / possible future additions
 
 Documented here so it's clear these were a deliberate choice, not an
