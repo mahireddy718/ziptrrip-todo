@@ -18,8 +18,12 @@ export function createApp() {
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok" });
   });
+  app.get("/health", (req, res) => {
+    res.json({ status: "ok" });
+  });
 
   app.use("/api/todos", todosRouter);
+  app.use("/todos", todosRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
