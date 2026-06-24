@@ -1,0 +1,32 @@
+[
+  {
+    "id": "a1f3c2d4-1111-4a2b-9c3d-0001example1",
+    "title": "Set up project repository",
+    "description": "Initialize git, push to remote, add README.",
+    "completed": true,
+    "priority": "medium",
+    "dueDate": null,
+    "createdAt": "2026-06-20T09:00:00.000Z",
+    "updatedAt": "2026-06-20T09:30:00.000Z"
+  },
+  {
+    "id": "a1f3c2d4-2222-4a2b-9c3d-0002example2",
+    "title": "Design the todos list page",
+    "description": "Add filters, search, and sorting controls.",
+    "completed": false,
+    "priority": "high",
+    "dueDate": "2026-06-28",
+    "createdAt": "2026-06-21T10:15:00.000Z",
+    "updatedAt": "2026-06-21T10:15:00.000Z"
+  },
+  {
+    "id": "a1f3c2d4-3333-4a2b-9c3d-0003example3",
+    "title": "Buy groceries",
+    "description": "Milk, eggs, bread, coffee.",
+    "completed": false,
+    "priority": "low",
+    "dueDate": "2026-06-25",
+    "createdAt": "2026-06-22T08:00:00.000Z",
+    "updatedAt": "2026-06-22T08:00:00.000Z"
+  }
+]

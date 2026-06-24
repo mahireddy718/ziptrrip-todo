@@ -1,0 +1,200 @@
+/* ---------- Design tokens ---------- */
+:root {
+  --color-bg: #f6f5f3;
+  --color-surface: #ffffff;
+  --color-border: #e3e0da;
+  --color-text: #20201d;
+  --color-text-muted: #6b6862;
+  --color-accent: #3d5a4c;       /* deep ink green - primary action color */
+  --color-accent-hover: #2e4639;
+  --color-danger: #b5443a;
+  --color-danger-hover: #993a31;
+  --color-low: #6b8f9e;
+  --color-medium: #c98a3a;
+  --color-high: #b5443a;
+  --color-overdue: #b5443a;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --font-body: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --shadow-card: 0 1px 2px rgba(32, 32, 29, 0.06), 0 1px 1px rgba(32, 32, 29, 0.04);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+button {
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  padding: 8px 14px;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+button:hover {
+  border-color: var(--color-text-muted);
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button.primary {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff;
+}
+button.primary:hover {
+  background: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
+}
+
+button.danger {
+  background: transparent;
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+button.danger:hover {
+  background: var(--color-danger);
+  color: #fff;
+}
+
+input[type="text"],
+input[type="date"],
+textarea,
+select {
+  font-family: inherit;
+  font-size: 14px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  width: 100%;
+}
+
+label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 4px;
+}
+
+.page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+.page-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.page-header h1 {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin: 0 0 4px;
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 999px;
+  line-height: 1.4;
+}
+.badge.priority-low { background: rgba(107, 143, 158, 0.15); color: var(--color-low); }
+.badge.priority-medium { background: rgba(201, 138, 58, 0.15); color: var(--color-medium); }
+.badge.priority-high { background: rgba(181, 68, 58, 0.15); color: var(--color-high); }
+
+.muted {
+  color: var(--color-text-muted);
+}
+
+.error-banner {
+  background: rgba(181, 68, 58, 0.08);
+  border: 1px solid rgba(181, 68, 58, 0.3);
+  color: var(--color-danger);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px 16px;
+  color: var(--color-text-muted);
+}
+
+.skeleton {
+  color: var(--color-text-muted);
+  font-style: italic;
+  padding: 24px 0;
+}

@@ -1,0 +1,143 @@
+.add-todo-form {
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.add-todo-row {
+  display: flex;
+  gap: 10px;
+}
+.add-todo-row input {
+  flex: 1;
+}
+
+.add-todo-details {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.add-todo-meta-row {
+  display: flex;
+  gap: 16px;
+}
+.add-todo-meta-row .field {
+  flex: 1;
+}
+
+.form-error {
+  color: var(--color-danger);
+  font-size: 13px;
+  margin: 10px 0 0;
+}
+
+.filter-bar {
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.status-tabs {
+  display: flex;
+  gap: 6px;
+}
+
+.status-tab {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  font-size: 13px;
+}
+.status-tab.active {
+  background: var(--color-bg);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.filter-controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.filter-controls input[type="text"] {
+  flex: 1;
+  min-width: 160px;
+}
+.filter-controls select {
+  width: auto;
+}
+
+.todo-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.todo-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+.todo-checkbox {
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+  accent-color: var(--color-accent);
+  cursor: pointer;
+}
+
+.todo-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.todo-title {
+  display: block;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-text);
+  margin-bottom: 4px;
+}
+.todo-title:hover {
+  color: var(--color-accent);
+}
+
+.todo-item.completed .todo-title {
+  text-decoration: line-through;
+  color: var(--color-text-muted);
+}
+
+.todo-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.due-date {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+.due-date.overdue {
+  color: var(--color-overdue);
+  font-weight: 600;
+}
+
+.todo-delete {
+  flex-shrink: 0;
+  font-size: 12px;
+  padding: 6px 10px;
+}
