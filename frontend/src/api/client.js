@@ -2,7 +2,11 @@
 // In dev, Vite proxies /api -> http://localhost:4000 (see vite.config.js).
 // In production, set VITE_API_BASE_URL to the deployed backend's URL, or
 // leave it unset if frontend and backend are served from the same origin.
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
+const API_BASE =
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.MODE === "production"
+    ? "https://ziptrrip-todo.onrender.com/api"
+    : "/api");
 
 async function request(path, options = {}) {
   const res = await fetch(`${API_BASE}${path}`, {

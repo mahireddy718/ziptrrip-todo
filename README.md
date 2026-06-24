@@ -1,7 +1,11 @@
 # Todo App
 
 A full-stack todo application built as a multi-page React frontend backed by
-a Node.js/Express REST API, with data persisted to a JSON file on disk.
+a Node.js/Express REST API, with data persisted to a remote MongoDB Atlas database and fallback local JSON storage.
+
+### Live Deployments
+- **Frontend Application (Vercel):** [https://ziptrrip-todo-roan.vercel.app](https://ziptrrip-todo-roan.vercel.app)
+- **Backend REST API (Render):** [https://ziptrrip-todo.onrender.com](https://ziptrrip-todo.onrender.com)
 
 ```
 todo-app/
