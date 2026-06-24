@@ -17,8 +17,17 @@ export default function TodoDetailPage() {
   const [saving, setSaving] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [newSubtaskTitle, setNewSubtaskTitle] = useState("");
+  const [toasts, setToasts] = useState([]);
 
   const [theme, toggleTheme] = useTheme();
+
+  const showToast = (message, type = "success") => {
+    const id = Date.now();
+    setToasts((prev) => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id));
+    }, 3000);
+  };
 
   useEffect(() => {
     if (!todoId) {
@@ -64,8 +73,10 @@ export default function TodoDetailPage() {
       setTodo(updated);
       setDraft(updated);
       setDirty(false);
+      showToast("Changes saved successfully! ✓", "success");
     } catch (err) {
       setError(err.message);
+      showToast("Failed to save changes.", "danger");
     } finally {
       setSaving(false);
     }
@@ -102,8 +113,13 @@ export default function TodoDetailPage() {
       const updated = await api.updateTodo(todoId, { completed: !todo.completed });
       setTodo(updated);
       setDraft(updated);
+      showToast(
+        updated.completed ? "Task completed! 🎉" : "Task marked as active.",
+        "success"
+      );
     } catch (err) {
       setError(err.message);
+      showToast("Failed to update status.", "danger");
     }
   }
 
@@ -303,6 +319,16 @@ export default function TodoDetailPage() {
           <dd className="todo-id">{todo.id}</dd>
         </div>
       </dl>
+      <div className="toast-container">
+        {toasts.map((t) => (
+          <div key={t.id} className={`toast toast-${t.type}`}>
+            <span className="toast-icon">
+              {t.type === "success" ? "✓" : t.type === "danger" ? "✕" : "ℹ"}
+            </span>
+            <span className="toast-message">{t.message}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

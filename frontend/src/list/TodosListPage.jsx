@@ -18,8 +18,17 @@ export default function TodosListPage() {
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+  const [toasts, setToasts] = useState([]);
+
   const [theme, toggleTheme] = useTheme();
+
+  const showToast = useCallback((message, type = "success") => {
+    const id = Date.now();
+    setToasts((prev) => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id));
+    }, 3000);
+  }, []);
 
   const fetchTodos = useCallback(async (currentFilters) => {
     setLoading(true);
@@ -90,8 +99,14 @@ export default function TodosListPage() {
   }, [fetchTodos]);
 
   async function handleCreate(payload) {
-    await api.createTodo(payload);
-    await fetchTodos(filters);
+    try {
+      await api.createTodo(payload);
+      await fetchTodos(filters);
+      showToast("Task added successfully! ✓", "success");
+    } catch (err) {
+      setError(err.message);
+      showToast("Failed to create task.", "danger");
+    }
   }
 
   async function handleToggle(todo) {
@@ -102,8 +117,13 @@ export default function TodosListPage() {
         active: prev.active + (updated.completed ? -1 : 1),
         completed: prev.completed + (updated.completed ? 1 : -1),
       }));
+      showToast(
+        updated.completed ? "Task completed! 🎉" : "Task marked as active.",
+        "success"
+      );
     } catch (err) {
       setError(err.message);
+      showToast("Failed to update task.", "danger");
     }
   }
 
@@ -111,8 +131,10 @@ export default function TodosListPage() {
     try {
       await api.deleteTodo(id);
       await fetchTodos(filters);
+      showToast("Task deleted successfully. ✕", "danger");
     } catch (err) {
       setError(err.message);
+      showToast("Failed to delete task.", "danger");
     }
   }
 
@@ -166,6 +188,16 @@ export default function TodosListPage() {
           ))}
         </ul>
       )}
+      <div className="toast-container">
+        {toasts.map((t) => (
+          <div key={t.id} className={`toast toast-${t.type}`}>
+            <span className="toast-icon">
+              {t.type === "success" ? "✓" : t.type === "danger" ? "✕" : "ℹ"}
+            </span>
+            <span className="toast-message">{t.message}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
