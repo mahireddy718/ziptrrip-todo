@@ -30,6 +30,21 @@ export function validateCreate(body) {
     }
   }
 
+  if (body.subtasks !== undefined) {
+    if (!Array.isArray(body.subtasks)) {
+      errors.push("subtasks must be an array");
+    } else {
+      body.subtasks.forEach((st, idx) => {
+        if (typeof st.title !== "string" || st.title.trim().length === 0) {
+          errors.push(`subtask at index ${idx} must have a non-empty title string`);
+        }
+        if (st.completed !== undefined && typeof st.completed !== "boolean") {
+          errors.push(`subtask at index ${idx} completed status must be a boolean`);
+        }
+      });
+    }
+  }
+
   return errors;
 }
 
@@ -63,6 +78,21 @@ export function validateUpdate(body) {
   if (body.dueDate !== undefined && body.dueDate !== null) {
     if (typeof body.dueDate !== "string" || isNaN(Date.parse(body.dueDate))) {
       errors.push("dueDate must be a valid date string (e.g. 2026-07-01) or null");
+    }
+  }
+
+  if (body.subtasks !== undefined) {
+    if (!Array.isArray(body.subtasks)) {
+      errors.push("subtasks must be an array");
+    } else {
+      body.subtasks.forEach((st, idx) => {
+        if (typeof st.title !== "string" || st.title.trim().length === 0) {
+          errors.push(`subtask at index ${idx} must have a non-empty title string`);
+        }
+        if (st.completed !== undefined && typeof st.completed !== "boolean") {
+          errors.push(`subtask at index ${idx} completed status must be a boolean`);
+        }
+      });
     }
   }
 
