@@ -1,11 +1,12 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { api } from "../api/client.js";
+import { useTheme } from "../utils/useTheme.js";
 import AddTodoForm from "./components/AddTodoForm.jsx";
 import FilterBar from "./components/FilterBar.jsx";
 import TodoItem from "./components/TodoItem.jsx";
 
 const DEFAULT_FILTERS = {
-  status: "all", // all | active | completed
+  status: "all",
   priority: "",
   search: "",
   sortBy: "createdAt",
@@ -17,6 +18,8 @@ export default function TodosListPage() {
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  const [theme, toggleTheme] = useTheme();
 
   const fetchTodos = useCallback(async (currentFilters) => {
     setLoading(true);
@@ -46,12 +49,45 @@ export default function TodosListPage() {
     }
   }, []);
 
-  // Debounce: re-fetch ~300ms after filters settle, so typing in search
-  // doesn't fire a request per keystroke.
+  // Optimized Fetch Debouncing: Instant updates for tabs, dropdowns, and sorting,
+  // but debounced for text search typing.
+  const lastFiltersRef = useRef(filters);
   useEffect(() => {
-    const handle = setTimeout(() => fetchTodos(filters), 300);
-    return () => clearTimeout(handle);
+    const prev = lastFiltersRef.current;
+    lastFiltersRef.current = filters;
+
+    const onlySearchChanged =
+      prev.search !== filters.search &&
+      prev.status === filters.status &&
+      prev.priority === filters.priority &&
+      prev.sortBy === filters.sortBy;
+
+    if (onlySearchChanged) {
+      const handle = setTimeout(() => {
+        fetchTodos(filters);
+      }, 300);
+      return () => clearTimeout(handle);
+    } else {
+      fetchTodos(filters);
+    }
   }, [filters, fetchTodos]);
+
+  // Realtime: subscribe to backend SSE stream (if available) and refresh
+  // the list when any DB change occurs.
+  const filtersRef = useRef(filters);
+  useEffect(() => {
+    filtersRef.current = filters;
+  }, [filters]);
+
+  useEffect(() => {
+    const es = new EventSource("/api/todos/stream");
+    es.onmessage = () => fetchTodos(filtersRef.current);
+    es.onerror = () => {
+      // If SSE fails, close and stop trying — frontend will still work via polling.
+      es.close();
+    };
+    return () => es.close();
+  }, [fetchTodos]);
 
   async function handleCreate(payload) {
     await api.createTodo(payload);
@@ -85,7 +121,17 @@ export default function TodosListPage() {
       <header className="page-header">
         <div>
           <p className="eyebrow">Todo App</p>
-          <h1>Your tasks</h1>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <h1>Your tasks</h1>
+            <button
+              type="button"
+              className="theme-toggle"
+              onClick={toggleTheme}
+              title={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
+            >
+              {theme === "light" ? "🌙" : "☀️"}
+            </button>
+          </div>
         </div>
         <p className="muted">
           {allCount.active} active &middot; {allCount.completed} completed
