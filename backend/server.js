@@ -7,3 +7,5 @@ const app = createApp();
 app.listen(PORT, () => {
   console.log(`Todo API listening on http://localhost:${PORT}`);
 });
+
+export default app;
