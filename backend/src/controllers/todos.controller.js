@@ -13,47 +13,20 @@ import { validateCreate, validateUpdate } from "../utils/validators.js";
  */
 export async function listTodos(req, res, next) {
   try {
-    let todos = await store.getAll();
     const { completed, priority, search, sortBy = "createdAt", order } = req.query;
 
+    const filters = {};
     if (completed !== undefined) {
-      const wantCompleted = completed === "true";
-      todos = todos.filter((t) => t.completed === wantCompleted);
+      filters.completed = completed === "true";
     }
-
     if (priority) {
-      todos = todos.filter((t) => t.priority === priority);
+      filters.priority = priority;
     }
-
     if (search) {
-      const needle = search.toLowerCase();
-      todos = todos.filter(
-        (t) =>
-          t.title.toLowerCase().includes(needle) ||
-          (t.description || "").toLowerCase().includes(needle)
-      );
+      filters.search = search;
     }
 
-    const priorityRank = { high: 3, medium: 2, low: 1 };
-    const sorters = {
-      createdAt: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
-      dueDate: (a, b) => {
-        // todos without a due date sort to the end
-        if (!a.dueDate && !b.dueDate) return 0;
-        if (!a.dueDate) return 1;
-        if (!b.dueDate) return -1;
-        return new Date(a.dueDate) - new Date(b.dueDate);
-      },
-      priority: (a, b) => priorityRank[a.priority] - priorityRank[b.priority],
-    };
-
-    const sorter = sorters[sortBy] || sorters.createdAt;
-    const defaultOrder = sortBy === "createdAt" ? "desc" : "asc";
-    const effectiveOrder = order || defaultOrder;
-
-    todos = [...todos].sort(sorter);
-    if (effectiveOrder === "desc") todos.reverse();
-
+    const todos = await store.getAll(filters, { sortBy, order });
     res.json({ data: todos, count: todos.length });
   } catch (err) {
     next(err);
@@ -89,6 +62,7 @@ export async function createTodo(req, res, next) {
       completed: false,
       priority: req.body.priority || "medium",
       dueDate: req.body.dueDate || null,
+      subtasks: req.body.subtasks || [],
       createdAt: now,
       updatedAt: now,
     };
@@ -130,6 +104,50 @@ export async function deleteTodo(req, res, next) {
       return res.status(404).json({ error: `Todo with id "${req.params.id}" was not found` });
     }
     res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * GET /api/todos/stream
+ * Server-Sent Events stream that emits MongoDB change events when
+ * `MONGO_URI` is configured. Each message is a JSON payload with
+ * { operationType, fullDocument, documentKey }.
+ */
+export async function streamTodos(req, res, next) {
+  try {
+    if (typeof store.watchChanges !== "function") {
+      return res.status(501).json({ error: "Realtime stream not supported" });
+    }
+
+    // SSE headers
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+    res.flushHeaders?.();
+
+    const closer = await store.watchChanges(
+      (change) => {
+        const payload = {
+          operationType: change.operationType,
+          fullDocument: change.fullDocument || null,
+          documentKey: change.documentKey || null,
+        };
+        res.write(`data: ${JSON.stringify(payload)}\n\n`);
+      },
+      (err) => {
+        res.write(`event: error\ndata: ${JSON.stringify({ message: err.message })}\n\n`);
+      }
+    );
+
+    req.on("close", () => {
+      try {
+        closer();
+      } catch (e) {
+        // ignore
+      }
+    });
   } catch (err) {
     next(err);
   }
