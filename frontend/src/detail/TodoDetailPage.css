@@ -1,67 +1,125 @@
+/* ---------- Back Navigation ---------- */
 .back-link {
-  display: inline-block;
-  margin-bottom: 20px;
-  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  font-weight: 500;
   color: var(--color-text-muted);
+  transition: color var(--transition-fast);
+}
+.back-link:hover {
+  color: var(--color-accent);
+  text-decoration: none;
 }
 
+/* ---------- Detail Header ---------- */
 .detail-header {
-  align-items: flex-start;
+  align-items: center;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 24px;
+  margin-bottom: 32px;
 }
 
 .completed-title {
   text-decoration: line-through;
   color: var(--color-text-muted);
+  font-weight: 500;
 }
 
+/* ---------- Detail Card ---------- */
 .detail-card {
-  padding: 20px;
+  padding: 28px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-lg);
+}
+
+.detail-card .field {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-card input[type="text"],
+.detail-card textarea,
+.detail-card select {
+  border-color: var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  transition: all var(--transition-fast);
+}
+.detail-card input[type="text"]:focus,
+.detail-card textarea:focus,
+.detail-card select:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-ring);
 }
 
 .detail-meta-row {
   display: flex;
-  gap: 16px;
+  gap: 20px;
 }
 .detail-meta-row .field {
   flex: 1;
+  min-width: 0;
 }
 
 .detail-actions {
   display: flex;
-  gap: 10px;
-  padding-top: 4px;
+  gap: 12px;
+  padding-top: 24px;
   border-top: 1px solid var(--color-border);
-  padding-top: 16px;
+  justify-content: flex-start;
+}
+.detail-actions button {
+  padding: 12px 20px;
+  font-size: 14px;
+  min-width: 120px;
 }
 
+/* ---------- Metadata & Timestamps ---------- */
 .detail-timestamps {
-  margin: 24px 0 0;
+  margin: 36px 0 0;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px 24px;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 20px;
+  padding: 20px 24px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
 }
 .detail-timestamps div {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 .detail-timestamps dt {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-text-muted);
 }
 .detail-timestamps dd {
   margin: 0;
   font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text);
+  word-break: break-all;
 }
 .todo-id {
   font-family: ui-monospace, "SF Mono", Consolas, monospace;
   font-size: 11px;
-  word-break: break-all;
   color: var(--color-text-muted);
+}
+@media (max-width: 600px) {
+  .detail-meta-row {
+    flex-direction: column;
+    gap: 16px;
+  }
 }
