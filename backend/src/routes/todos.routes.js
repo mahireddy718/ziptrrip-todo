@@ -5,11 +5,13 @@ import {
   createTodo,
   updateTodo,
   deleteTodo,
+  streamTodos,
 } from "../controllers/todos.controller.js";
 
 const router = Router();
 
 router.get("/", listTodos);
+router.get("/stream", streamTodos);
 router.get("/:id", getTodo);
 router.post("/", createTodo);
 router.put("/:id", updateTodo);
