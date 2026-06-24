@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "../api/client.js";
-import { formatDateTime } from "../utils/format.js";
+import { formatDateTime, formatRelativeTime } from "../utils/format.js";
+import { useTheme } from "../utils/useTheme.js";
 
 function getTodoIdFromQuery() {
   const params = new URLSearchParams(window.location.search);
@@ -15,6 +16,9 @@ export default function TodoDetailPage() {
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
   const [dirty, setDirty] = useState(false);
+  const [newSubtaskTitle, setNewSubtaskTitle] = useState("");
+
+  const [theme, toggleTheme] = useTheme();
 
   useEffect(() => {
     if (!todoId) {
@@ -55,6 +59,7 @@ export default function TodoDetailPage() {
         description: draft.description,
         priority: draft.priority,
         dueDate: draft.dueDate || null,
+        subtasks: draft.subtasks || [],
       });
       setTodo(updated);
       setDraft(updated);
@@ -64,6 +69,31 @@ export default function TodoDetailPage() {
     } finally {
       setSaving(false);
     }
+  }
+
+  function addSubtask(e) {
+    e.preventDefault();
+    if (!newSubtaskTitle.trim()) return;
+    const newSt = {
+      id: crypto.randomUUID?.() || Math.random().toString(36).substring(2, 9),
+      title: newSubtaskTitle.trim(),
+      completed: false,
+    };
+    const updatedSubtasks = [...(draft.subtasks || []), newSt];
+    updateDraft("subtasks", updatedSubtasks);
+    setNewSubtaskTitle("");
+  }
+
+  function toggleSubtask(stId) {
+    const updatedSubtasks = (draft.subtasks || []).map((st) =>
+      st.id === stId ? { ...st, completed: !st.completed } : st
+    );
+    updateDraft("subtasks", updatedSubtasks);
+  }
+
+  function deleteSubtask(stId) {
+    const updatedSubtasks = (draft.subtasks || []).filter((st) => st.id !== stId);
+    updateDraft("subtasks", updatedSubtasks);
   }
 
   async function handleToggleComplete() {
@@ -128,7 +158,17 @@ export default function TodoDetailPage() {
       <header className="page-header detail-header">
         <div>
           <p className="eyebrow">Todo details</p>
-          <h1 className={todo.completed ? "completed-title" : ""}>{todo.title}</h1>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <h1 className={todo.completed ? "completed-title" : ""}>{todo.title}</h1>
+            <button
+              type="button"
+              className="theme-toggle"
+              onClick={toggleTheme}
+              title={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
+            >
+              {theme === "light" ? "🌙" : "☀️"}
+            </button>
+          </div>
         </div>
         <button
           type="button"
@@ -187,6 +227,49 @@ export default function TodoDetailPage() {
           </div>
         </div>
 
+        {/* Subtasks Checklist Management */}
+        <div className="field" style={{ borderTop: "1px dashed var(--color-border)", paddingTop: "20px", marginTop: "4px" }}>
+          <label style={{ fontSize: "12px", fontWeight: 700, color: "var(--color-text)", marginBottom: "12px" }}>Sub-tasks Checklist</label>
+          
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "16px" }}>
+            {(!draft.subtasks || draft.subtasks.length === 0) ? (
+              <p style={{ fontSize: "13px", color: "var(--color-text-muted)", margin: "0", fontStyle: "italic" }}>No sub-tasks added yet. Add steps below.</p>
+            ) : (
+              draft.subtasks.map((st) => (
+                <div key={st.id} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "6px 0", borderBottom: "1px dashed var(--color-border)" }}>
+                  <input
+                    type="checkbox"
+                    checked={st.completed}
+                    onChange={() => toggleSubtask(st.id)}
+                    style={{ width: "16px", height: "16px", cursor: "pointer", accentColor: "var(--color-accent)" }}
+                  />
+                  <span style={{ flex: 1, fontSize: "14px", textDecoration: st.completed ? "line-through" : "none", color: st.completed ? "var(--color-text-muted)" : "var(--color-text)" }}>
+                    {st.title}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => deleteSubtask(st.id)}
+                    style={{ background: "transparent", border: "none", color: "var(--color-danger)", padding: "4px", fontSize: "12px", cursor: "pointer", boxShadow: "none" }}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+
+          <form onSubmit={addSubtask} style={{ display: "flex", gap: "8px" }}>
+            <input
+              type="text"
+              placeholder="Add a sub-task (e.g., Gather materials)..."
+              value={newSubtaskTitle}
+              onChange={(e) => setNewSubtaskTitle(e.target.value)}
+              style={{ flex: 1 }}
+            />
+            <button type="submit" style={{ whiteSpace: "nowrap" }}>Add Step</button>
+          </form>
+        </div>
+
         <div className="detail-actions">
           <button
             type="button"
@@ -209,11 +292,11 @@ export default function TodoDetailPage() {
         </div>
         <div>
           <dt>Created</dt>
-          <dd>{formatDateTime(todo.createdAt)}</dd>
+          <dd title={formatDateTime(todo.createdAt)}>{formatRelativeTime(todo.createdAt)}</dd>
         </div>
         <div>
           <dt>Last updated</dt>
-          <dd>{formatDateTime(todo.updatedAt)}</dd>
+          <dd title={formatDateTime(todo.updatedAt)}>{formatRelativeTime(todo.updatedAt)}</dd>
         </div>
         <div>
           <dt>Todo ID</dt>
