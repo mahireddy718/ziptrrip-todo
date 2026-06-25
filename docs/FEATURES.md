@@ -13,7 +13,7 @@ The home page. Shows every todo and lets you manage the whole list.
 | **Add a todo** | A single-line input is always visible. Typing and submitting (Enter or the *Add* button) creates a todo with just a title. Focusing the input expands an optional panel for **description**, **priority** (low/medium/high, defaults to medium), and **due date**. |
 | **List all todos** | Fetched from `GET /api/todos` on page load. |
 | **Mark complete / incomplete** | A checkbox on each row toggles `completed` via `PATCH /api/todos/:id`. Completed todos get a strikethrough title. |
-| **Delete a todo** | A *Delete* button on each row, guarded by a confirmation dialog (`window.confirm`) so accidental clicks can't destroy data. |
+| **Delete a todo** | A *Delete* button on each row, guarded by a premium custom confirmation modal overlay (with a blurred background and keyframe scale animations) so accidental clicks cannot destroy data. |
 | **Filter by status** | Tabs for **All / Active / Completed**. Active/Completed tabs show live counts. |
 | **Filter by priority** | A dropdown to narrow the list to only High, Medium, or Low priority todos. |
 | **Search** | A text box matches against both `title` and `description` (case-insensitive substring match), debounced by 300ms so it doesn't spam the API while typing. |
@@ -35,7 +35,7 @@ parameter (read with `URLSearchParams`, no router involved).
 | **Full detail view** | Shows title, description, priority, due date, completion status, and both `createdAt`/`updatedAt` timestamps (the "any other information associated with it" called for in the brief) plus the todo's id. |
 | **Edit in place** | Title, description, priority, and due date are all editable form fields. A *Save changes* button (disabled until something actually changes) persists edits via `PATCH /api/todos/:id`. |
 | **Toggle complete / incomplete** | A button in the header flips completion status immediately (no need to hit Save). |
-| **Delete** | A *Delete todo* button, also confirmation-gated, deletes the todo and then does a full-page redirect back to the list (`window.location.href = "/index.html"`) — consistent with this being a multi-page app, not an SPA with client-side redirects. |
+| **Delete** | A *Delete todo* button triggers the premium custom confirmation modal. If confirmed, deletes the todo and performs a full-page redirect back to the list dashboard (`window.location.href = "/index.html"`). |
 | **Back link** | A "&larr; Back to all todos" link returns to the list page. |
 | **Missing/invalid id handling** | If there's no `id` in the URL, or the id doesn't match any todo (404 from the API), a clear message is shown instead of a blank or broken page. |
 | **Loading & error states** | Mirrors the list page's approach: a loading message while fetching, and an inline error banner if a save/delete/toggle request fails. |
@@ -70,6 +70,7 @@ These features were added to make the application feel like a production-ready p
 |---|---|
 | **Sub-tasks (Checklists)** | Any todo can have an arbitrary number of sub-tasks. You can manage them (add steps, toggle completed steps, delete steps) in-place on the single todo detail page. Progress (completed checklist items out of total checklist items) is displayed visually on the main todos list page via a progress bar. |
 | **Persistent Dark Mode** | A theme toggle button swaps between Light and Dark mode. Theme state is saved to `localStorage` and read instantly in the document's `<head>` before render, avoiding any white flash on refresh or full page navigation across pages. |
+| **Custom confirmation modals** | Replaces basic browser alerts and `window.confirm` popups with beautiful, custom-styled dialog modal overlays. Operates natively with keyframe animations, blurred overlays, and proper responsive padding for desktop and mobile. |
 
 ## Out of scope / possible future additions
 
