@@ -18,6 +18,7 @@ export default function TodoDetailPage() {
   const [dirty, setDirty] = useState(false);
   const [newSubtaskTitle, setNewSubtaskTitle] = useState("");
   const [toasts, setToasts] = useState([]);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const [theme, toggleTheme] = useTheme();
 
@@ -123,9 +124,12 @@ export default function TodoDetailPage() {
     }
   }
 
-  async function handleDelete() {
-    const confirmed = window.confirm(`Delete "${todo.title}"? This can't be undone.`);
-    if (!confirmed) return;
+  function handleDelete() {
+    setShowDeleteModal(true);
+  }
+
+  async function confirmDelete() {
+    setShowDeleteModal(false);
     try {
       await api.deleteTodo(todoId);
       // Full page navigation back to the list - this app is multi-page,
@@ -319,6 +323,25 @@ export default function TodoDetailPage() {
           <dd className="todo-id">{todo.id}</dd>
         </div>
       </dl>
+      {showDeleteModal && (
+        <div className="modal-overlay" onClick={() => setShowDeleteModal(false)}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+            <h3>Delete Task</h3>
+            <p>
+              Are you sure you want to delete <strong>"{todo.title}"</strong>? This action cannot be undone.
+            </p>
+            <div className="modal-actions">
+              <button type="button" onClick={() => setShowDeleteModal(false)}>
+                Cancel
+              </button>
+              <button type="button" className="danger" onClick={confirmDelete}>
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="toast-container">
         {toasts.map((t) => (
           <div key={t.id} className={`toast toast-${t.type}`}>

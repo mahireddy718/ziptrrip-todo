@@ -19,6 +19,7 @@ export default function TodosListPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [toasts, setToasts] = useState([]);
+  const [todoToDelete, setTodoToDelete] = useState(null);
 
   const [theme, toggleTheme] = useTheme();
 
@@ -183,11 +184,38 @@ export default function TodosListPage() {
               key={todo.id}
               todo={todo}
               onToggle={handleToggle}
-              onDelete={handleDelete}
+              onDelete={setTodoToDelete}
             />
           ))}
         </ul>
       )}
+      {todoToDelete && (
+        <div className="modal-overlay" onClick={() => setTodoToDelete(null)}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+            <h3>Delete Task</h3>
+            <p>
+              Are you sure you want to delete <strong>"{todoToDelete.title}"</strong>? This action cannot be undone.
+            </p>
+            <div className="modal-actions">
+              <button type="button" onClick={() => setTodoToDelete(null)}>
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="danger"
+                onClick={async () => {
+                  const id = todoToDelete.id;
+                  setTodoToDelete(null);
+                  await handleDelete(id);
+                }}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="toast-container">
         {toasts.map((t) => (
           <div key={t.id} className={`toast toast-${t.type}`}>

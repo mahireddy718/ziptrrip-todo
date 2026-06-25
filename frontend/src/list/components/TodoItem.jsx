@@ -3,12 +3,8 @@ import { formatHumanizedDueDate, isOverdue } from "../../utils/format.js";
 export default function TodoItem({ todo, onToggle, onDelete }) {
   const overdue = isOverdue(todo.dueDate, todo.completed);
 
-  async function handleDelete() {
-    // Confirmation check before removing a task
-    const confirmed = window.confirm(`Are you sure you want to delete "${todo.title}"?`);
-    if (confirmed) {
-      await onDelete(todo.id);
-    }
+  function handleDelete() {
+    onDelete(todo);
   }
 
   // Capitalize priority label for a cleaner look
