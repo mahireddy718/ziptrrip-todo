@@ -43,11 +43,13 @@ export default function TodosListPage() {
       if (currentFilters.status === "active") params.completed = false;
       if (currentFilters.status === "completed") params.completed = true;
 
-      const result = await api.listTodos(params);
+      const [result, all] = await Promise.all([
+        api.listTodos(params),
+        api.listTodos({}),
+      ]);
       setTodos(result.data);
 
       // Fetch unfiltered counts for the status tabs (active/completed totals)
-      const all = await api.listTodos({});
       setAllCount({
         active: all.data.filter((t) => !t.completed).length,
         completed: all.data.filter((t) => t.completed).length,

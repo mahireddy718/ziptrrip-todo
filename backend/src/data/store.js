@@ -29,12 +29,25 @@ async function writeAllFile(todos) {
 // MongoDB connection helpers
 let mongoClientPromise = null;
 let mongoCollection = null;
+let lastConnectFailureTime = 0;
+const FAILURE_COOLDOWN_MS = 30000; // 30 seconds cooldown
+
 async function ensureMongo() {
   if (!MONGO_URI) return null;
   if (mongoCollection) return mongoCollection;
+
+  // If connection failed recently, skip trying to connect to avoid blocking requests
+  const now = Date.now();
+  if (now - lastConnectFailureTime < FAILURE_COOLDOWN_MS) {
+    return null;
+  }
+
   if (!mongoClientPromise) {
     console.log("Connecting to MongoDB Atlas database server...");
-    const client = new MongoClient(MONGO_URI);
+    const client = new MongoClient(MONGO_URI, {
+      connectTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 5000,
+    });
     mongoClientPromise = client
       .connect()
       .then(() => {
@@ -47,6 +60,7 @@ async function ensureMongo() {
       .catch((err) => {
         console.error("Failed to connect to MongoDB server, falling back to local JSON file store:", err.message);
         mongoClientPromise = null;
+        lastConnectFailureTime = Date.now();
         return null;
       });
   }
